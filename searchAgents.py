@@ -503,6 +503,7 @@ class ClosestDotSearchAgent(SearchAgent):
         "*** YOUR CODE HERE ***"
 
         cost = 999999999
+
         for i in range(food.width):
             for j in range(food.height):
                 if food[i][j]:
