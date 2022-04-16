@@ -123,7 +123,6 @@ def breadthFirstSearch(problem):
     current = ((problem.getStartState(),[]),[],0)
     q.put(current)
     result = ([],[],99999999)
-    print("result:",result[2])
 
     while not q.empty():
         node, path, total = q.get()
