@@ -159,7 +159,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 open.push((next, new_actions),
                           problem.getCostOfActions(new_actions) + heuristic(next, problem))
 
-    print("search fail")
     util.raiseNotDefined()
 
 
