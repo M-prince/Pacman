@@ -17,6 +17,8 @@ In search.py, you will implement generic search algorithms which are called by
 Pacman agents (in searchAgents.py).
 """
 
+import queue
+from graphicsUtils import clear_screen
 import util
 
 
@@ -71,6 +73,13 @@ def tinyMazeSearch(problem):
     from game import Directions
     s = Directions.SOUTH
     w = Directions.WEST
+ 
+    print("Start:", problem.getStartState())
+    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+    while True:
+        continue
+    
     return [s, s, w, s, w, w, s, w]
 
 
@@ -108,27 +117,51 @@ def depthFirstSearch(problem):
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
+    q = queue.Queue()
+    closed = []
 
-    queue = util.Queue()
-    expend_node = []
-    queue.push((problem.getStartState(), []))
+    current = ((problem.getStartState(),[]),[],0)
+    q.put(current)
+    result = ([],[],99999999)
 
-    while not queue.isEmpty():
-        standpoint, moves = queue.pop()
-        if standpoint not in expend_node:
-            expend_node.append(standpoint)
-            if problem.isGoalState(standpoint):
-                return moves
-            for state, direction, value in problem.getSuccessors(standpoint):
-                queue.push((state, moves + [direction]))
-    return None
+    while not q.empty():
+        node, path, total = q.get()
+        if problem.isGoalState(node):
+            if total < result[2]:
+                result = (node,path,total)
+            continue
+        if node not in closed:
+            closed.append(node)
+            for successor, move, cost in problem.getSuccessors(node):
+                q.put((successor, path + [move], total + cost))
+
+    return result[1]
 
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    def takeThird(elem):
+        return elem[2]
+    closed = []
 
+    current = (problem.getStartState(), [], [])
+    open = [current]
+
+    while len(open)!=0:
+        node, path, total = open[0]
+        open.pop(0)
+        if problem.isGoalState(node):
+            return path
+        if node not in closed:
+            closed.append(node)
+            for successor, move, cost in problem.getSuccessors(node):
+                for open_node, open_move, open_cost in open:
+                    if open_node == successor and open_cost > total + [cost]:
+                        open.remove((open_node, open_move, open_cost))
+                        break
+                open.append((successor, path + [move], total + [cost]))
+            open.sort(key=takeThird)
 
 def nullHeuristic(state, problem=None):
     """
